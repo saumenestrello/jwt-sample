@@ -50,5 +50,45 @@ jwt.expiration
 A questo punto il client può chiamare anche gli endpoint del webservice che non sono pubblici, semplicemente settando l'header X-Auth della request con il jwt appena ricevuto. 
 
 ## Controllo autenticativo
-La validazione dei token delle richieste è interamente gestita da Spring Security.
+La validazione dei token delle richieste è interamente gestita da Spring Security. Le configurazioni necessarie sono contenute nella classe *WebSecurityConfig*, in cui:
+- viene impostata la funzione di hash che utilizzerà l'authenticationManager per verificare le credenziali al momento del login
+```
+ @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(); //in questo caso viene utilizzato l'agoritmo Bcrypt
+    }
+```
+- vengono settati i parametri necessari ad evitare CORS issues
+```
+@Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.setAllowedMethods(Arrays.asList("POST, PUT, GET, OPTIONS, DELETE"));
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+```
+- vengono stabilite le regole di sicurezza per le richieste HTTP
+```
+@Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() // non abbiamo bisogno di una sessione
+                .cors().and()
+                .authorizeRequests()
+                .antMatchers("/h2-console/**").permitAll() //dichiarazione endpoint pubblici (non autenticati)
+                .antMatchers("/public/**").permitAll()
+                .anyRequest().authenticated();
 
+        // Filtro Custom JWT
+        httpSecurity.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+
+        httpSecurity.headers().cacheControl();
+    }
+```
