@@ -32,5 +32,23 @@ USER_USERNAME VARCHAR(50) PRIMARY KEY
 AUTHORITY_ID BIGINT PRIMARY KEY
 ```
 
+## login
+Il processo di autenticazione di un utente inizia con la chiamata a **/public/login**. Il metodo handler di questo endpoint si aspetta di parsare un oggetto di tipo *JwtAuthenticationRequest* a partire dal body della richiesta, che quindi dovrà consistere in un oggetto JSON fatto in questo modo:
 
+```
+{
+  "username" : *username utente*,
+  "password" : *password utente*
+}
+```
+Se i dati sono corretti  il webservice restituisce una response costruita in questo modo: l'header **X-Auth** viene valorizzato con un nuovo jwt e il body viene riempito con lo username dell'utente loggato e le sue authorities. Per modificare i parametri con cui vengono generati i jwt è sufficiente cambiare queste voci nel file *src/main/resources/application.properties*:
+```
+jwt.header
+jwt.secret
+jwt.expiration
+```
+A questo punto il client può chiamare anche gli endpoint del webservice che non sono pubblici, semplicemente settando l'header X-Auth della request con il jwt appena ricevuto. 
+
+## controllo autenticativo
+La validazione dei token delle richieste è interamente gestita da Spring Security.
 
