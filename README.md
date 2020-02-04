@@ -2,7 +2,7 @@
 Progetto Spring Boot con autenticazione gestita da Spring Security tramite JWT. Questo template può essere utilizzato come base da cui partire per sviluppare webservice sicuri che necessitano di un meccanismo di autenticazione degli utenti.
 
 
-## database
+## Database
 Il webservice utilizza un database H2 (con persistenza) incapsulato direttamente nell'applicazione; nel caso in cui si voglia utilizzare una base di dati differente sarà sufficiente modificare i parametri corrispondenti nel file *src/main/resources/application.properties* (ovviamente mantenendo lo stesso db schema):
 
 ```
@@ -32,7 +32,7 @@ USER_USERNAME VARCHAR(50) PRIMARY KEY
 AUTHORITY_ID BIGINT PRIMARY KEY
 ```
 
-## login
+## Login
 Il processo di autenticazione di un utente inizia con la chiamata a **/public/login**. Il metodo handler di questo endpoint si aspetta di parsare un oggetto di tipo *JwtAuthenticationRequest* a partire dal body della richiesta, che quindi dovrà consistere in un oggetto JSON fatto in questo modo:
 
 ```
@@ -49,6 +49,6 @@ jwt.expiration
 ```
 A questo punto il client può chiamare anche gli endpoint del webservice che non sono pubblici, semplicemente settando l'header X-Auth della request con il jwt appena ricevuto. 
 
-## controllo autenticativo
+## Controllo autenticativo
 La validazione dei token delle richieste è interamente gestita da Spring Security.
 
