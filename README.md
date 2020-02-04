@@ -139,5 +139,5 @@ static final String CLAIM_KEY_AUTHORITIES = "roles";
 static final String CLAIM_KEY_IS_ENABLED = "isEnabled";
 ```
 
-##Importare in Eclipse
+## Importare in Eclipse
 L'intero progetto può essere importato velocemente in Eclipse. E' sufficiente cliccare su **File>Import...** e scegliere *Existing Maven Project*. Per eseguire l'applicazione è necessario cliccare col tasto destro sulla root del progetto, scegliere **Run As>Java Application** e poi scegliere la classe JwtApplication (se appare un dialog intitolato *Select Java Application*).
